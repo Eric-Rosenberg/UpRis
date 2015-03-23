@@ -109,7 +109,7 @@ public class Grid extends View {
     /* Move Shape every second until collision */
     //cellChecked[Col][Row]
     public void moveShape() {
-        new CountDownTimer(500, 1000) { // Change first para x'000 seconds
+        new CountDownTimer(300, 1000) { // Change first para x'000 seconds
             @Override
             public void onTick(long miliseconds) {
             }
@@ -117,9 +117,9 @@ public class Grid extends View {
             @Override
             public void onFinish() {
                 canMake = true;
-                for (int i = currentColumn; i < numColumns; i++) // Move UpRis
+                for (int i = currentColumn; i == currentColumn; i++) // Move UpRis
                 {
-                    for (int j = currentRow; j < numRows; j++) { // TODO Check moving left / right collision
+                    for (int j = currentRow; j == currentRow; j++) { // TODO Check moving left / right collision
                         if (cellChecked[i][j] && j != 0 && !cellChecked[leftBound][j - 1] && !cellChecked[rightBound][j - 1]) // Collision detection
                         {
                             canMake = false;//ready = false;
@@ -128,6 +128,7 @@ public class Grid extends View {
                             currentRow--;
                    //       Log.d(TAG, "Current Row AND COLUMN: ROW: " + currentRow + ", COL: " + currentColumn);
                             invalidate();
+                            checkFullRow();
                             start();
                         }
                     }
@@ -141,6 +142,16 @@ public class Grid extends View {
    //     Log.d(TAG, "Size Changed");
         super.onSizeChanged(w, h, oldw, oldh);
         calculateDimensions();
+    }
+
+    /* Check if an entire row is filled */
+    private void checkFullRow() {
+        for (int i = 0; i < numColumns; i++) {
+            for (int j = 0; j < numRows; i++) {
+                if (!cellChecked[i][j])
+                    break;
+            }
+        }
     }
 
     private void calculateDimensions() {
@@ -200,12 +211,12 @@ public class Grid extends View {
 //        Log.d(TAG, "clickedColumn: " + clickedColumn);
   //      Log.d(TAG, "currentRow, currentColumn: " + currentRow + " " + currentColumn);
         if (currentRow != 0) {
-            if (clickedColumn < currentColumn) {
+            if (clickedColumn < currentColumn && !cellChecked[leftBound - 1][currentRow]) {
                 cellChecked[currentColumn][currentRow] = false;
                 cellChecked[--currentColumn][currentRow] = true;
                 updateBounds(0,0);
             }
-            if (clickedColumn > currentColumn) {
+            if (clickedColumn > currentColumn && !cellChecked[leftBound + 1][currentRow]) {
                 cellChecked[currentColumn][currentRow] = false;
                 cellChecked[++currentColumn][currentRow] = true;
                 updateBounds(0,1);
