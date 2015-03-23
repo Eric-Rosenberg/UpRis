@@ -119,7 +119,7 @@ public class Grid extends View {
                 canMake = true;
                 for (int i = currentColumn; i < numColumns; i++) // Move UpRis
                 {
-                    for (int j = currentRow; j < numRows; j++) {
+                    for (int j = currentRow; j < numRows; j++) { // TODO Check moving left / right collision
                         if (cellChecked[i][j] && j != 0 && !cellChecked[leftBound][j - 1] && !cellChecked[rightBound][j - 1]) // Collision detection
                         {
                             canMake = false;//ready = false;
