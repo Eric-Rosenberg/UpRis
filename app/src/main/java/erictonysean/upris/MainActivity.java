@@ -35,7 +35,7 @@ public class MainActivity extends Activity implements Runnable {
     {
       //  (new Thread(new MainActivity())).start();
         /* Wait x / 1000 seconds */
-        new CountDownTimer(500, 1000)
+        new CountDownTimer(300, 1000)
         {
             boolean done = false;
             @Override
