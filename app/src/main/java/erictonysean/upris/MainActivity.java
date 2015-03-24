@@ -35,8 +35,9 @@ public class MainActivity extends Activity implements Runnable {
     {
       //  (new Thread(new MainActivity())).start();
         /* Wait x / 1000 seconds */
-        new CountDownTimer(5000, 1000)
+        new CountDownTimer(500, 1000)
         {
+            boolean done = false;
             @Override
             public void onTick(long miliseconds)
             { }
@@ -44,6 +45,12 @@ public class MainActivity extends Activity implements Runnable {
             @Override
             public void onFinish()
             {
+                if(done == false)
+                {
+                    grid.fillRow(0);
+                    done = true;
+                }
+
                 Random rand = new Random();
                 int x = rand.nextInt(15);
          //       Log.d(TAG, "Hi lady");
