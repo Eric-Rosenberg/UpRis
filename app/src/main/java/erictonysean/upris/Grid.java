@@ -136,7 +136,7 @@ public class Grid extends View {
 
     /* Fill a row except the last column*/
     //@param x row to be filled
-    void fillRow(int x) {
+    public void fillRow(int x) {
         Log.d(TAG, "Filling Row " + x);
         for (int i = 0; i < numColumns - 1; i++) {
             cellChecked[i][x] = true;
@@ -182,17 +182,16 @@ public class Grid extends View {
                                 currentRow--;
                                 invalidate();
                                 start();
-                                checkFullRow();
-                                Log.d(TAG, "Current Row AND COLUMN: ROW: " + currentRow + ", COL: " + currentColumn);
+                                //   Log.d(TAG, "Current Row AND COLUMN: ROW: " + currentRow + ", COL: " + currentColumn);
                             }
                 }
                 if (canMake == true) {
                     if (shape == 1) { // Dot
-                        Log.d(TAG, "Finished moving -- Blocks been placed " + currentColumn + " " + currentRow + " " + r + " " + g + " " + b);
+                        //    Log.d(TAG, "Finished moving -- Blocks been placed " + currentColumn + " " + currentRow + " " + r + " " + g + " " + b);
                         redArray[currentColumn][currentRow] = r;
                         greenArray[currentColumn][currentRow] = g;
                         blueArray[currentColumn][currentRow] = b;
-                        Log.d(TAG, "Done storying colors");
+                        //    Log.d(TAG, "Done storying colors");
                     } else { // Line
                         for (int i = 0; i < 4; i++) {
                             redArray[currentColumn][currentRow+i] = r;
@@ -203,6 +202,8 @@ public class Grid extends View {
                 }
             }
         }.start();
+
+        checkFullRow(); // Check if new block completes a row
     }
 
     @Override
@@ -215,93 +216,46 @@ public class Grid extends View {
     /* Check if an entire row is filled */
     private void checkFullRow() {
         boolean rowFull = true;
-
-        for (int i = 0; i < numColumns; i++)
-            if (!cellChecked[i][0]) {
-                rowFull = false;
-                break;
-            }
-
-        if (rowFull == true) {
-            boolean[][] tempArray = new boolean[15][15];
-
-            for (int i = 0; i < numColumns; i++)
-                for (int j = 0; j < numRows; j++)
-                    tempArray[i][j] = false;
-
-            Log.d(TAG, "You filled a row. Oh thank god");
-
-            String makeStuff;
-            Log.d(TAG, "BEFORE");
-            for (int i = 0; i < numColumns; i++) {
-                makeStuff = "";
-                for (int j = 0; j < numRows; j++) {
-                    if (cellChecked[i][j] == true)
-                        makeStuff = (makeStuff + "T ");
-                    else
-                        makeStuff = (makeStuff + "F ");
-                }
-                Log.d(TAG, makeStuff);
-            }
-
-            for (int i = 0; i < numColumns; i++) {
-                for (int j = 1; j < numRows; j++) {
-                    if (cellChecked[i][j] == true)
-                        tempArray[i][j - 1] = true;
-                    else
-                        tempArray[i][j - 1] = false;
+        for(int i = 0; i < numColumns; i++){ // Check row by row
+            for(int j = 0; j < numRows && rowFull; j++){
+                if(!cellChecked[j][i]){
+                    rowFull = !rowFull;
                 }
             }
+            if(rowFull){ // Found a full row
+                Log.d(TAG,"ROW " +i + " is full");
+                boolean[][] tempArray = new boolean[numColumns][numRows];
 
-            for (int i = 0; i < numColumns; i++)
-                for (int j = 1; j < numRows; j++)
-                    redArray[i][j - 1] = redArray[i][j];
-
-            for (int i = 0; i < numColumns; i++)
-                for (int j = 1; j < numRows; j++) {
-                    greenArray[i][j - 1] = greenArray[i][j];
+                for (int tempCol = 0; tempCol < numColumns; tempCol++) {
+                    for (int tempRow = 1; tempRow < numRows; tempRow++) {
+                        if (cellChecked[tempCol][tempRow] == true)
+                            tempArray[tempCol][tempRow - 1] = true;
+                        else
+                            tempArray[tempCol][tempRow - 1] = false;
+                    }
                 }
+                for (int i2 = 0; i2 < numColumns; i2++)
+                    for (int j = 1; j < numRows; j++)
+                        redArray[i2][j - 1] = redArray[i2][j];
 
-            for (int i = 0; i < numColumns; i++)
-                for (int j = 1; j < numRows; j++) {
-                    blueArray[i][j - 1] = blueArray[i][j];
-                }
+                for (int i2 = 0; i2 < numColumns; i2++)
+                    for (int j = 1; j < numRows; j++) {
+                        greenArray[i2][j - 1] = greenArray[i2][j];
+                    }
 
-            for (int i = 0; i < numColumns; i++)
-                for (int j = 0; j < numRows; j++)
-                    cellChecked[i][j] = tempArray[i][j];
+                for (int i2 = 0; i2 < numColumns; i2++)
+                    for (int j = 1; j < numRows; j++) {
+                        blueArray[i2][j - 1] = blueArray[i2][j];
+                    }
+
+                for (int i2 = 0; i2 < numColumns; i2++)
+                    for (int j = 0; j < numRows; j++)
+                        cellChecked[i2][j] = tempArray[i2][j];
+            }
+            else // next row
+                rowFull = true;
 
             invalidate();
-
-            Log.d(TAG, "AFTER!");
-
-            for(int i = 0; i < numColumns; i++)
-            {
-                makeStuff = "";
-                for (int j = 0; j < numRows; j++)
-                {
-                    if (cellChecked[i][j] == true)
-                        makeStuff = (makeStuff + "T ");
-                    else
-                        makeStuff = (makeStuff + "F ");
-                }
-                Log.d(TAG, makeStuff);
-            }
-
-            Log.d(TAG, "NEW ARRAY");
-
-            /*for(int i = 0; i < numColumns; i++)
-            {
-                makeStuff = "";
-                for (int j = 0; j < numRows; j++)
-                {
-                    if (tempArray[i][j] == true)
-                        makeStuff = (makeStuff + "T ");
-                    else
-                        makeStuff = (makeStuff + "F ");
-                }
-                Log.d(TAG, makeStuff);
-            }*/
         }
     }
 

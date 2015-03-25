@@ -47,7 +47,9 @@ public class MainActivity extends Activity implements Runnable {
             {
                 if(done == false)
                 {
-                    grid.fillRow(0);
+                   // grid.fillRow(0);
+                   // grid.fillRow(1);
+                    grid.fillRow(2);
                     done = true;
                 }
 
